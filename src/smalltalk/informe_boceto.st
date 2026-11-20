@@ -1,5 +1,13 @@
 
-| archivo |
+| archivo eventos problemas |
+
+eventos := OrderedCollection new.
+eventos add: '01:20:33 - Uso de tarjeta IV-07 en P4'.
+eventos add: '01:40:00 - Corte de energia'.
+
+problemas := OrderedCollection new.
+problemas add: 'Registro duplicado en tarjetas.csv'.
+problemas add: 'Registro corrupto en tarjetas.csv'.
 
 archivo := FileSystem disk workingDirectory / 'informe_halley7.txt'.
 
@@ -8,13 +16,15 @@ archivo writeStreamDo: [ :salida |
     salida cr.
 
     salida nextPutAll: '1. LINEA DE TIEMPO'; cr.
-    salida nextPutAll: '01:20:33 - Uso de tarjeta IV-07 en P4'; cr.
-    salida nextPutAll: '01:40:00 - Corte de energia'; cr.
+    eventos do: [ :evento |
+        salida nextPutAll: evento; cr.
+    ].
     salida cr.
 
     salida nextPutAll: '2. PROBLEMAS DETECTADOS'; cr.
-    salida nextPutAll: 'Registro duplicado en tarjetas.csv'; cr.
-    salida nextPutAll: 'Registro corrupto en tarjetas.csv'; cr.
+    problemas do: [ :problema |
+        salida nextPutAll: problema; cr.
+    ].
     salida cr.
 
     salida nextPutAll: '3. PREGUNTAS Y RESPUESTAS'; cr.
