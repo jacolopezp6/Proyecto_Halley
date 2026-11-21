@@ -8,7 +8,7 @@ import Data.Text (Text)
 import qualified Data.Text as T
 import Data.Time (UTCTime)
 import Halley.Event
-import Halley.Ingest (ingestDirectory)
+import Halley.Ingest (ingestDirectory, loadQueryAnswers)
 import System.Exit (exitFailure)
 
 main :: IO ()
@@ -39,6 +39,20 @@ main = do
   check "JSONL includes ingest time and source location" ("\"ingested_at_utc\":\"" `T.isInfixOf` jsonl && "\"location\":\"line:3\"" `T.isInfixOf` jsonl)
   check "JSON object original is preserved" $
     maybe False (T.isPrefixOf "{" . recordOriginal) (findEvent "energia.json#1" events)
+  queryResult <- loadQueryAnswers "../../tests/fixtures/member1-demo/queries.jsonl"
+  case queryResult of
+    Left _ -> check "demo query response parses" False
+    Right queries -> do
+      check "demo query response parses" (length queries == 1)
+      check "report query links evidence and snapshot" (case queries of
+        [query] -> evidenceIds query == ["presencia.csv#2", "presencia.csv#5"] && datasetVersion query == "demo-v1"
+        _ -> False)
+      check "query JSON Unicode escapes decode" (case queries of
+        [query] -> question query == "¿Qué muestran los registros de presencia en P3 a las 02:55 UTC?"
+        _ -> False)
+      check "loaded query appears in report" ("Q-DEMO-01" `T.isInfixOf` renderReportWithQueries events queries)
+  invalidQuery <- loadQueryAnswers "../../tests/fixtures/member1-demo/queries-invalid.jsonl"
+  check "incomplete query response is rejected" (case invalidQuery of Left _ -> True; Right _ -> False)
   putStrLn "All member 1 checks passed."
 
 check :: String -> Bool -> IO ()

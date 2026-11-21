@@ -59,4 +59,11 @@
 
 ## Consultas y respuestas
 
-No se recibieron respuestas de consultas para esta ejecución.
+### Q-DEMO-01 — ¿Qué muestran los registros de presencia en P3 a las 02:55 UTC?
+
+- Respuesta: Hay dos lecturas con conteos distintos; el registro queda en conflicto.
+- Nivel: supported
+- Versión de datos: demo-v1
+- Evidencia: presencia.csv#2, presencia.csv#5
+- Supuestos: Los ID de evidencia corresponden a las filas del fixture sintético.
+- Límites: El sensor de presencia no identifica personas., Los datos son ficticios y solo demuestran el formato.

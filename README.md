@@ -47,7 +47,7 @@ Las fuentes oficiales del curso deben colocarse en `data/raw/` y `data/reference
 
 ## Componente de Persona 1
 
-La primera implementación de C1/C6 vive en `src/haskell/`: procesa los seis tipos de fuente y dos referencias con los formatos de demostración, normaliza horas que tienen zona explícita, conserva texto original y procedencia por registro, resuelve alias, señala errores, duplicados y conflictos, y genera un informe Markdown y una salida JSONL. Los contratos y límites están en `docs/member1/`.
+La primera implementación de C1/C6 vive en `src/haskell/`: procesa los seis tipos de fuente y dos referencias con los formatos de demostración, normaliza horas que tienen zona explícita, conserva texto original y procedencia por registro, resuelve alias, señala errores, duplicados y conflictos, y genera un informe Markdown y una salida JSONL. El informe puede incorporar respuestas de consulta desde un archivo JSONL, con sus IDs de evidencia, certeza, supuestos, límites y versión de datos. Los contratos y límites están en `docs/member1/`.
 
 Desde la raíz del repo, ejecutar con GHC:
 
@@ -56,7 +56,7 @@ Desde la raíz del repo, ejecutar con GHC:
 .\src\haskell\test.ps1
 ```
 
-En Linux/macOS: `./src/haskell/run.sh` y `./src/haskell/test.sh`. Los parsers deben contrastarse con los archivos oficiales antes de interpretar el caso. La persistencia común y la recepción de respuestas de Prolog aún requieren integración.
+En Linux/macOS: `./src/haskell/run.sh` y `./src/haskell/test.sh`. Los parsers deben contrastarse con los archivos oficiales antes de interpretar el caso. La generación automática de respuestas desde Prolog y la persistencia común aún requieren integración.
 
 ## Fuentes que debe integrar el sistema
 

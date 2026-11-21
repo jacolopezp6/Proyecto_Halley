@@ -149,7 +149,6 @@ renderReportWithQueries events queries = T.unlines (header <> summary <> timelin
       , "- Evidencia: " <> listOrNone (evidenceIds query)
       , "- Supuestos: " <> listOrNone (assumptions query)
       , "- Límites: " <> listOrNone (limitations query)
-      , ""
       ]
     renderEvent event =
       "| " <> maybe "sin hora" formatUtc (occurredAtUtc event)

@@ -1,9 +1,9 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-module Halley.Ingest (ingestDirectory) where
+module Halley.Ingest (ingestDirectory, loadQueryAnswers) where
 
 import Control.Exception (IOException, try)
-import Data.Char (isSpace)
+import Data.Char (chr, digitToInt, isHexDigit, isSpace)
 import Data.List (find, nub)
 import Data.Map.Strict (Map)
 import qualified Data.Map.Strict as Map
@@ -16,12 +16,37 @@ import Halley.Event
 import Data.Time (UTCTime)
 import Data.Time.Clock (getCurrentTime)
 import System.FilePath ((</>))
-import Text.Parsec (Parsec, between, char, choice, eof, getInput, many, many1, noneOf, parse, sepBy, skipMany, space, string)
+import Text.Parsec (Parsec, between, char, choice, count, eof, getInput, hexDigit, many, many1, noneOf, parse, sepBy, skipMany, space, string)
 import qualified Text.Parsec as P
 import System.IO (IOMode (ReadMode), hSetEncoding, utf8, withFile)
 
 type Row = Map Text Text
 type Parser = Parsec Text ()
+
+loadQueryAnswers :: FilePath -> IO (Either Text [QueryAnswer])
+loadQueryAnswers path = do
+  result <- readUtf8 path
+  pure $ case result of
+    Left exception -> Left (T.pack (show exception))
+    Right raw -> traverse (parseQueryLine path) [(number, line) | (number, line) <- numbered (T.lines raw), not (T.null (T.strip line))]
+
+parseQueryLine :: FilePath -> (Int, Text) -> Either Text QueryAnswer
+parseQueryLine path (lineNumber, raw) = do
+  (fields, _) <- either (Left . T.pack . show) Right (parse (jsonObjectWithRaw <* spaces <* eof) (path <> ":" <> show lineNumber) raw)
+  let required key = maybe (Left ("Falta el campo requerido " <> key <> " en " <> T.pack path <> ":" <> T.pack (show lineNumber))) Right (Map.lookup key fields)
+      listField key = case Map.lookup key fields of
+        Nothing -> Left ("Falta el arreglo " <> key <> " en " <> T.pack path <> ":" <> T.pack (show lineNumber))
+        Just value | T.null value -> Right []
+                   | otherwise -> Right (splitOn '\x1f' value)
+  QueryAnswer
+    <$> required "query_id"
+    <*> required "question"
+    <*> required "result"
+    <*> required "certainty"
+    <*> listField "evidence_ids"
+    <*> listField "assumptions"
+    <*> listField "limitations"
+    <*> required "dataset_version"
 
 data Person = Person
   { personId :: Text
@@ -317,16 +342,42 @@ jsonPair :: Parser (Text, Text)
 jsonPair = do
   key <- jsonString
   spaces *> char ':' *> spaces
-  value <- jsonString P.<|> (T.pack <$> many1 (P.satisfy (\c -> c /= ',' && c /= '}' && not (isSpace c))))
+  value <- jsonString P.<|> jsonStringList P.<|> (T.pack <$> many1 (P.satisfy (\c -> c /= ',' && c /= '}' && not (isSpace c))))
   pure (key, value)
+
+jsonStringList :: Parser Text
+jsonStringList = T.intercalate "\x1f" <$> between (char '[') (char ']') (jsonString `sepBy` (spaces *> char ',' *> spaces))
 
 jsonString :: Parser Text
 jsonString = T.pack <$> between (char '"') (char '"') (many jsonChar)
   where
-    jsonChar = do
-      c <- noneOf "\"\\"
-      pure c
-      P.<|> (char '\\' *> choice [char '"', char '\\', char '/' , char 'n' *> pure '\n', char 'r' *> pure '\r', char 't' *> pure '\t'])
+    jsonChar = noneOf "\"\\" P.<|> (char '\\' *> choice
+      [ char '"'
+      , char '\\'
+      , char '/'
+      , char 'b' *> pure '\b'
+      , char 'f' *> pure '\f'
+      , char 'n' *> pure '\n'
+      , char 'r' *> pure '\r'
+      , char 't' *> pure '\t'
+      , char 'u' *> unicodeChar
+      ])
+    unicodeChar = do
+      first <- readHexCode
+      if first >= 0xD800 && first <= 0xDBFF
+        then do
+          _ <- string "\\u"
+          second <- readHexCode
+          if second >= 0xDC00 && second <= 0xDFFF
+            then pure (chr (0x10000 + ((first - 0xD800) * 0x400) + second - 0xDC00))
+            else P.parserFail "Invalid low surrogate in JSON string"
+        else if first >= 0xDC00 && first <= 0xDFFF
+          then P.parserFail "Unexpected low surrogate in JSON string"
+          else pure (chr first)
+    readHexCode = do
+      digits <- count 4 hexDigit
+      let value = foldl (\total digit -> total * 16 + digitToInt digit) 0 digits
+      if all isHexDigit digits then pure value else P.parserFail "Invalid Unicode escape in JSON string"
 
 spaces :: Parser ()
 spaces = skipMany (space P.<|> char '\n' P.<|> char '\r')

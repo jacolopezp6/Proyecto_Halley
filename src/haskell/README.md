@@ -16,7 +16,7 @@ Con GHC instalado, desde la raíz del repositorio:
 .\src\haskell\run.ps1
 ```
 
-En Linux/macOS, usa `./src/haskell/run.sh`. Los argumentos opcionales son directorio de datos, ruta del informe y ruta de eventos JSONL, relativos a la raíz del repositorio. Por defecto se leen los fixtures sintéticos y se generan ejemplos en `docs/member1/`.
+En Linux/macOS, usa `./src/haskell/run.sh`. Los argumentos opcionales son directorio de datos, ruta del informe, ruta de eventos JSONL y ruta de respuestas JSONL, relativos a la raíz del repositorio. Por defecto se leen los fixtures sintéticos, incluida una respuesta sintética, y se generan ejemplos en `docs/member1/`. Para omitir respuestas en PowerShell, pasa una cadena vacía como cuarto argumento.
 
 Para ejecutar las verificaciones del núcleo, usa `./src/haskell/test.ps1` en Windows o `./src/haskell/test.sh` en Linux/macOS. También se puede usar `cabal test` desde `src/haskell`.
 
@@ -29,10 +29,10 @@ Para ejecutar las verificaciones del núcleo, usa `./src/haskell/test.ps1` en Wi
 - `../../tests/haskell/`: verificaciones del componente.
 - `../../docs/member1/`: decisiones, contrato, casos e informes de demostración.
 
-El informe reserva una sección para respuestas de Prolog mediante `QueryAnswer`, con nivel de certeza, evidencia, supuestos, límites y versión del conjunto de datos. La función de informe es pura; conectar Prolog en vivo depende del protocolo acordado por el equipo.
+El informe incorpora respuestas en `QueryAnswer`, con nivel de certeza, evidencia, supuestos, límites y versión del conjunto de datos. El CLI puede leerlas desde JSONL compatible con el esquema de respuesta; conectar Prolog en vivo para producir ese archivo depende del protocolo acordado por el equipo.
 
 ## Pendientes de integración real
 
-Esta versión conserva procedencia por archivo y fila/línea, pero no calcula SHA-256 ni persiste en la base compartida. La ingesta de respuestas de Prolog tampoco está conectada a la CLI. Hay que ratificar el contrato con el equipo y adaptar los parsers a los archivos originales.
+Esta versión conserva procedencia por archivo y fila/línea, pero no calcula SHA-256 ni persiste en la base compartida. La generación de respuestas de Prolog tampoco está conectada a la CLI. Hay que ratificar el contrato con el equipo y adaptar los parsers a los archivos originales.
 
 Este paquete cubre el componente de Persona 1; no implementa las capacidades Prolog, Java o Smalltalk de los otros integrantes.

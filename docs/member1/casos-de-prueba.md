@@ -18,6 +18,7 @@ Los nombres de archivo se toman del plan del proyecto. Los archivos no estaban p
 | STORE-01 | Eventos/correcciones | Añadir corrección, consultar vista original y corregida; reconstruir respuesta guardada. | Original inalterado; corrección versionada; respuesta conserva snapshot y IDs de soporte. |
 | API-01 | Ingesta | Reenviar misma solicitud e ID; luego reutilizar ID con contenido distinto. | Primera repetición es idempotente; contenido distinto da conflicto auditable. |
 | API-02 | Consultas | Consultar pregunta con evidencia y pregunta con evidencia insuficiente. | Respuesta incluye estado de certeza, evidencia, supuestos, límites y versión; ausencia de registro no prueba falsedad. |
+| C6-01 | `queries.jsonl` | Cargar respuesta estructurada con ID, certeza, evidencia, supuestos, límites y snapshot; probar campo requerido ausente y escape Unicode. | El informe incluye la respuesta y sus referencias; JSONL incompleto da error visible y no se registra como válido. |
 | CONC-01 | Ingesta/consultas | Consultas simultáneas idénticas mientras ingresa una lectura nueva. | Consultas del mismo snapshot dan la misma respuesta/version; nueva lectura aparece en versión posterior. |
 | REC-01 | Integración | Detener el componente destino durante una lectura y reiniciarlo. | Lectura queda durable/pendiente, reintenta con el mismo ID y termina confirmada o expuesta como error. |
 | RUN-01 | Sistema | Arrancar desde cero con un solo comando y ocho archivos. | Dependencias/servicios reportan estado; errores de fuente son visibles; el proceso no oculta fallas. |
