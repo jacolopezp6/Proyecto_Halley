@@ -1,0 +1,4 @@
+module_id,adjacent_modules,reader_ids
+P1,P3,P1
+P3,P1|P8,P3
+P8,P3,P8

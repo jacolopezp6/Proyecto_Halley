@@ -1,0 +1,3 @@
+2042-07-12T02:58:00Z | canal-2 | Ruido estático breve; sin identificación de voz.
+2042-07-12T03:06:00Z | canal-2 | Luka reporta que el pasillo norte está despejado.
+2042-07-12T03:11:00Z | canal-1 | Señal incompleta: «...puerta...»

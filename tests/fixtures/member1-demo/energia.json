@@ -1,0 +1,5 @@
+[
+  {"timestamp_utc":"2042-07-12T03:00:00Z","module":"P8","voltage_v":24.1,"status":"nominal"},
+  {"timestamp_utc":"2042-07-12T03:04:00Z","module":"P3","voltage_v":0.0,"status":"outage"},
+  {"timestamp_utc":"2042-07-12T03:09:00Z","module":"P8","voltage_v":23.8,"status":"nominal"}
+]

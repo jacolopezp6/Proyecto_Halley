@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://halley-7.local/schemas/query-response-v1.json",
+  "title": "Halley-7 Forensic Query Response",
+  "description": "One Prolog or other query-engine response, serialized as one JSON object per JSONL line for C6 reporting.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "query_id",
+    "question",
+    "result",
+    "certainty",
+    "evidence_ids",
+    "assumptions",
+    "limitations",
+    "dataset_version"
+  ],
+  "properties": {
+    "query_id": {"type": "string", "minLength": 1},
+    "question": {"type": "string", "minLength": 1},
+    "result": {"type": "string"},
+    "certainty": {"type": "string", "enum": ["supported", "refuted", "insufficient_evidence", "indeterminate"]},
+    "evidence_ids": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "assumptions": {"type": "array", "items": {"type": "string"}},
+    "limitations": {"type": "array", "items": {"type": "string"}},
+    "dataset_version": {"type": "string", "minLength": 1}
+  }
+}
