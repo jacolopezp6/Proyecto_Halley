@@ -145,6 +145,8 @@ components:
         diagnostics: {type: array, items: {type: object}}
     QueryResponse:
       type: object
+      additionalProperties: false
+      description: Serialized one object per line in query-response.schema.json when exchanged with the Haskell C6 CLI as JSONL.
       required: [query_id, result, certainty, evidence_ids, assumptions, dataset_version, limitations]
       properties:
         query_id: {type: string}

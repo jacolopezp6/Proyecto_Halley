@@ -64,6 +64,8 @@ main = do
       check "loaded query appears in report" ("Q-DEMO-01" `T.isInfixOf` renderReportWithQueries events queries)
   invalidQuery <- loadQueryAnswers "../../tests/fixtures/member1-demo/queries-invalid.jsonl"
   check "incomplete query response is rejected" (case invalidQuery of Left _ -> True; Right _ -> False)
+  invalidCertainty <- loadQueryAnswers "../../tests/fixtures/member1-demo/queries-invalid-certainty.jsonl"
+  check "query response rejects certainty outside contract" (case invalidCertainty of Left _ -> True; Right _ -> False)
   putStrLn "All member 1 checks passed."
 
 check :: String -> Bool -> IO ()

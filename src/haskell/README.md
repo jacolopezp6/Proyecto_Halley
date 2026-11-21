@@ -29,7 +29,7 @@ Para ejecutar las verificaciones del núcleo, usa `./src/haskell/test.ps1` en Wi
 - `../../tests/haskell/`: verificaciones del componente.
 - `../../docs/member1/`: decisiones, contrato, casos e informes de demostración.
 
-El informe incorpora respuestas en `QueryAnswer`, con nivel de certeza, evidencia, supuestos, límites y versión del conjunto de datos. El CLI puede leerlas desde JSONL compatible con el esquema de respuesta; conectar Prolog en vivo para producir ese archivo depende del protocolo acordado por el equipo.
+El informe incorpora respuestas en `QueryAnswer`, con nivel de certeza, evidencia, supuestos, límites y versión del conjunto de datos. El CLI puede leer respuestas JSONL que cumplan `docs/member1/query-response.schema.json`; rechaza niveles de certeza fuera del contrato. Conectar Prolog en vivo para producir ese archivo depende del protocolo acordado por el equipo.
 
 ## Pendientes de integración real
 

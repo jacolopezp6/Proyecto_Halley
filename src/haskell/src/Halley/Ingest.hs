@@ -39,11 +39,15 @@ parseQueryLine path (lineNumber, raw) = do
         Nothing -> Left ("Falta el arreglo " <> key <> " en " <> T.pack path <> ":" <> T.pack (show lineNumber))
         Just value | T.null value -> Right []
                    | otherwise -> Right (splitOn '\x1f' value)
+  certaintyValue <- required "certainty"
+  if certaintyValue `notElem` ["supported", "refuted", "insufficient_evidence", "indeterminate"]
+    then Left ("Valor de certainty no permitido en " <> T.pack path <> ":" <> T.pack (show lineNumber))
+    else pure ()
   QueryAnswer
     <$> required "query_id"
     <*> required "question"
     <*> required "result"
-    <*> required "certainty"
+    <*> pure certaintyValue
     <*> listField "evidence_ids"
     <*> listField "assumptions"
     <*> listField "limitations"
