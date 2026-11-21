@@ -1,0 +1,164 @@
+openapi: 3.1.0
+info:
+  title: Halley-7 Local Evidence Integration API
+  version: 1.0.0-draft
+  description: >-
+    Proposed local JSON API for evidence ingestion, timeline reads, forensic queries,
+    and append-only corrections. Draft pending team ratification.
+servers:
+  - url: http://127.0.0.1:8080/v1
+paths:
+  /events:
+    post:
+      operationId: ingestEvent
+      summary: Ingest an original evidence record idempotently
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Event'
+      responses:
+        '202':
+          description: Accepted and persisted, or already accepted with the same ID and content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/IngestReceipt'
+        '409':
+          description: Same event ID was previously used with different content
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '422':
+          description: Envelope is invalid. Preserve the received payload in the ingestion error log.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /timeline:
+    get:
+      operationId: getTimeline
+      summary: Read events from a fixed data view and version
+      parameters:
+        - in: query
+          name: from
+          schema: {type: string, format: date-time}
+        - in: query
+          name: to
+          schema: {type: string, format: date-time}
+        - in: query
+          name: view
+          required: true
+          schema: {type: string, enum: [original, corrected]}
+        - in: query
+          name: dataset_version
+          schema: {type: string}
+      responses:
+        '200':
+          description: Timeline ordered by normalized UTC time; undated records are reported separately.
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [dataset_version, events, undated_event_ids]
+                properties:
+                  dataset_version: {type: string}
+                  events: {type: array, items: {$ref: '#/components/schemas/Event'}}
+                  undated_event_ids: {type: array, items: {type: string}}
+  /queries:
+    post:
+      operationId: runQuery
+      summary: Run a forensic query against one immutable snapshot
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [query_id, question, view]
+              properties:
+                query_id: {type: string}
+                question: {type: string}
+                view: {type: string, enum: [original, corrected]}
+                dataset_version: {type: string}
+      responses:
+        '200':
+          description: Result with certainty, evidence references, assumptions, version, and limitations.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QueryResponse'
+  /corrections:
+    post:
+      operationId: appendCorrection
+      summary: Append a correction without changing the original event
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              additionalProperties: false
+              required: [correction_id, event_id, changes, reason, author, created_at_utc]
+              properties:
+                correction_id: {type: string}
+                event_id: {type: string}
+                changes: {type: object}
+                reason: {type: string}
+                author: {type: string}
+                created_at_utc: {type: string, format: date-time}
+      responses:
+        '201':
+          description: Correction appended as a new version
+        '404':
+          description: Original event does not exist
+components:
+  schemas:
+    Event:
+      type: object
+      description: Same fields and validation rules as event.schema.json.
+      required: [event_id, source_id, source_record_id, record_original, event_type, content, validation_status, provenance, ingested_at_utc, schema_version]
+      properties:
+        event_id: {type: string}
+        occurred_at_utc: {type: [string, 'null'], format: date-time}
+        time_original: {type: [string, 'null']}
+        source_id: {type: string}
+        source_record_id: {type: string}
+        record_original: {}
+        event_type: {type: string}
+        content: {type: object}
+        validation_status: {type: string}
+        provenance: {type: object}
+        ingested_at_utc: {type: [string, 'null'], format: date-time}
+        schema_version: {type: string, const: '1'}
+        correction_of: {type: [string, 'null']}
+    IngestReceipt:
+      type: object
+      required: [event_id, status, dataset_version]
+      properties:
+        event_id: {type: string}
+        status: {type: string, enum: [accepted, already_accepted, invalid_preserved]}
+        dataset_version: {type: string}
+        diagnostics: {type: array, items: {type: object}}
+    QueryResponse:
+      type: object
+      required: [query_id, result, certainty, evidence_ids, assumptions, dataset_version, limitations]
+      properties:
+        query_id: {type: string}
+        result: {type: string}
+        certainty: {type: string, enum: [supported, refuted, insufficient_evidence, indeterminate]}
+        evidence_ids: {type: array, items: {type: string}}
+        assumptions: {type: array, items: {type: string}}
+        dataset_version: {type: string}
+        limitations: {type: array, items: {type: string}}
+    Error:
+      type: object
+      required: [code, message, retryable, correlation_id]
+      properties:
+        code: {type: string}
+        message: {type: string}
+        retryable: {type: boolean}
+        correlation_id: {type: string}

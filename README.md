@@ -1,6 +1,6 @@
 # Proyecto Halley-7: lo que pasó durante la tormenta
 
-Proyecto final de Paradigmas del Lenguaje. Esta carpeta contiene únicamente la estructura inicial de trabajo; las implementaciones, datos de entrada y decisiones de arquitectura se completarán en equipo.
+Proyecto final de Paradigmas del Lenguaje. El repositorio contiene la estructura del sistema y el primer componente Haskell de Persona 1; las demás capacidades y la integración total se completarán en equipo.
 
 ## Contexto
 
@@ -26,21 +26,37 @@ Proyecto_Halley/
 ├── README.md
 ├── ROLES_Y_GITHUB.md
 ├── docs/                 # arquitectura, protocolo, modelo de datos, decisiones
+│   └── member1/          # contrato, bitácora, pruebas e informe de demostración
 ├── data/
 │   ├── raw/              # seis fuentes originales, preservadas sin cambios
 │   ├── reference/        # personal.csv y estacion.csv
 │   └── live/             # lecturas generadas por el simulador
 ├── src/
-│   ├── haskell/
+│   ├── haskell/          # C1/C6: ingesta, normalización e informe
 │   ├── prolog/
 │   ├── java/
 │   ├── smalltalk/
 │   └── database/         # esquema y scripts de persistencia
 ├── simulator/            # generador configurable de lecturas en vivo
 └── tests/                # pruebas por lenguaje y de integración
+    ├── fixtures/member1-demo/ # datos sintéticos, no evidencia oficial
+    └── haskell/
 ```
 
-Las carpetas están vacías deliberadamente. Añadan los archivos de datos entregados por el curso en las carpetas indicadas; no alteren los originales. La estructura no contiene implementaciones ni fija una base de datos o protocolo de comunicación.
+Las fuentes oficiales del curso deben colocarse en `data/raw/` y `data/reference/` sin modificarlas. Los ejemplos de `tests/fixtures/member1-demo/` son sintéticos y solo sirven para ejecutar el componente Haskell; no deben citarse como evidencia del caso.
+
+## Componente de Persona 1
+
+La primera implementación de C1/C6 vive en `src/haskell/`: procesa los seis tipos de fuente y dos referencias con los formatos de demostración, normaliza horas que tienen zona explícita, conserva texto original y procedencia por registro, resuelve alias, señala errores, duplicados y conflictos, y genera un informe Markdown y una salida JSONL. Los contratos y límites están en `docs/member1/`.
+
+Desde la raíz del repo, ejecutar con GHC:
+
+```powershell
+.\src\haskell\run.ps1
+.\src\haskell\test.ps1
+```
+
+En Linux/macOS: `./src/haskell/run.sh` y `./src/haskell/test.sh`. Los parsers deben contrastarse con los archivos oficiales antes de interpretar el caso. La persistencia común y la recepción de respuestas de Prolog aún requieren integración.
 
 ## Fuentes que debe integrar el sistema
 
