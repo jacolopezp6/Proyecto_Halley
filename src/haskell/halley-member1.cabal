@@ -13,6 +13,7 @@ executable halley-member1
       base >=4.18 && <5
     , bytestring
     , containers
+    , filepath
     , parsec
     , text
     , time
@@ -28,6 +29,7 @@ test-suite member1-tests
       base >=4.18 && <5
     , bytestring
     , containers
+    , filepath
     , parsec
     , text
     , time
