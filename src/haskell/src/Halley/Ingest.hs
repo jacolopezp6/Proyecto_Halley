@@ -34,24 +34,33 @@ loadQueryAnswers path = do
 parseQueryLine :: FilePath -> (Int, Text) -> Either Text QueryAnswer
 parseQueryLine path (lineNumber, raw) = do
   (fields, _) <- either (Left . T.pack . show) Right (parse (jsonObjectWithRaw <* spaces <* eof) (path <> ":" <> show lineNumber) raw)
-  let required key = maybe (Left ("Falta el campo requerido " <> key <> " en " <> T.pack path <> ":" <> T.pack (show lineNumber))) Right (Map.lookup key fields)
+  let location = T.pack path <> ":" <> T.pack (show lineNumber)
+      expectedFields = Set.fromList ["query_id", "question", "result", "certainty", "evidence_ids", "assumptions", "limitations", "dataset_version"]
+      unexpectedFields = Set.toList (Map.keysSet fields `Set.difference` expectedFields)
+      required key = maybe (Left ("Falta el campo requerido " <> key <> " en " <> location)) Right (Map.lookup key fields)
+      nonEmpty key = do
+        value <- required key
+        if T.null (T.strip value) then Left ("El campo " <> key <> " está vacío en " <> location) else Right value
       listField key = case Map.lookup key fields of
-        Nothing -> Left ("Falta el arreglo " <> key <> " en " <> T.pack path <> ":" <> T.pack (show lineNumber))
+        Nothing -> Left ("Falta el arreglo " <> key <> " en " <> location)
         Just value | T.null value -> Right []
                    | otherwise -> Right (splitOn '\x1f' value)
+  if null unexpectedFields
+    then pure ()
+    else Left ("Campos no permitidos en " <> location <> ": " <> T.intercalate ", " unexpectedFields)
   certaintyValue <- required "certainty"
   if certaintyValue `notElem` ["supported", "refuted", "insufficient_evidence", "indeterminate"]
-    then Left ("Valor de certainty no permitido en " <> T.pack path <> ":" <> T.pack (show lineNumber))
+    then Left ("Valor de certainty no permitido en " <> location)
     else pure ()
   QueryAnswer
-    <$> required "query_id"
-    <*> required "question"
+    <$> nonEmpty "query_id"
+    <*> nonEmpty "question"
     <*> required "result"
     <*> pure certaintyValue
     <*> listField "evidence_ids"
     <*> listField "assumptions"
     <*> listField "limitations"
-    <*> required "dataset_version"
+    <*> nonEmpty "dataset_version"
 
 data Person = Person
   { personId :: Text

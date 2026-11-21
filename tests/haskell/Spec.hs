@@ -66,6 +66,10 @@ main = do
   check "incomplete query response is rejected" (case invalidQuery of Left _ -> True; Right _ -> False)
   invalidCertainty <- loadQueryAnswers "../../tests/fixtures/member1-demo/queries-invalid-certainty.jsonl"
   check "query response rejects certainty outside contract" (case invalidCertainty of Left _ -> True; Right _ -> False)
+  invalidFields <- loadQueryAnswers "../../tests/fixtures/member1-demo/queries-invalid-fields.jsonl"
+  check "query response rejects undeclared properties" (case invalidFields of Left _ -> True; Right _ -> False)
+  emptyQueryId <- loadQueryAnswers "../../tests/fixtures/member1-demo/queries-empty-id.jsonl"
+  check "query response requires non-empty query ID" (case emptyQueryId of Left _ -> True; Right _ -> False)
   putStrLn "All member 1 checks passed."
 
 check :: String -> Bool -> IO ()

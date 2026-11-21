@@ -21,6 +21,7 @@ Los nombres de archivo se toman del plan del proyecto. Los archivos no estaban p
 | API-02 | Consultas | Consultar pregunta con evidencia y pregunta con evidencia insuficiente. | Respuesta incluye estado de certeza, evidencia, supuestos, límites y versión; ausencia de registro no prueba falsedad. |
 | C6-01 | `queries.jsonl` | Cargar respuesta estructurada con ID, certeza, evidencia, supuestos, límites y snapshot; probar campo requerido ausente y escape Unicode. | El informe incluye la respuesta y sus referencias; JSONL incompleto da error visible y no se registra como válido. |
 | C6-02 | `queries.jsonl` | Entregar un nivel de certeza ajeno al enum del contrato. | La respuesta se rechaza con error de archivo/línea; no se incorpora al informe. |
+| C6-03 | `queries.jsonl` | Entregar propiedades no declaradas o un ID de consulta vacío. | La respuesta se rechaza conforme al esquema; no se incorpora al informe. |
 | CONC-01 | Ingesta/consultas | Consultas simultáneas idénticas mientras ingresa una lectura nueva. | Consultas del mismo snapshot dan la misma respuesta/version; nueva lectura aparece en versión posterior. |
 | REC-01 | Integración | Detener el componente destino durante una lectura y reiniciarlo. | Lectura queda durable/pendiente, reintenta con el mismo ID y termina confirmada o expuesta como error. |
 | RUN-01 | Sistema | Arrancar desde cero con un solo comando y ocho archivos. | Dependencias/servicios reportan estado; errores de fuente son visibles; el proceso no oculta fallas. |
