@@ -3,22 +3,26 @@
 module Main (main) where
 
 import Control.Monad (unless)
+import qualified Data.ByteString.Char8 as BSC
 import qualified Data.Map.Strict as Map
 import Data.Text (Text)
 import qualified Data.Text as T
 import Data.Time (UTCTime)
 import Halley.Event
 import Halley.Ingest (ingestDirectory, loadQueryAnswers)
+import Halley.Sha256 (sha256Hex)
 import System.Exit (exitFailure)
 
 main :: IO ()
 main = do
+  check "SHA-256 known vector" (sha256Hex (BSC.pack "abc") == "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad")
   check "UTC timestamp" (normalizeTimestamp "2042-07-12T03:00:00Z" /= Nothing)
   check "explicit offset" (normalizeTimestamp "2042-07-12T05:00:00+0200" == normalizeTimestamp "2042-07-12T03:00:00Z")
   check "ISO offset with colon" (normalizeTimestamp "2042-07-12T05:00:00+02:00" == normalizeTimestamp "2042-07-12T03:00:00Z")
   check "unzoned timestamp remains unknown" (normalizeTimestamp "2042-07-12T03:00:00" == (Nothing :: Maybe UTCTime))
   events <- ingestDirectory "../../tests/fixtures/member1-demo"
   check "all eight sources load" (length events == 28)
+  check "each parsed event has source SHA-256" (all hasHash events)
   let badPresence = findEvent "presencia.csv#3" events
   check "corrupt presence reading is invalid" (maybe False ((== Invalid) . validationStatus) badPresence)
   check "corrupt original is preserved" (maybe False ((== "2042-07-12T03:05:00Z,P3,dos") . recordOriginal) badPresence)
@@ -69,3 +73,8 @@ allTimesOrdered events = dates == (quickSort dates)
     dates = [stamp | event <- events, Just stamp <- [occurredAtUtc event]]
     quickSort [] = []
     quickSort (x : xs) = quickSort [a | a <- xs, a < x] <> [x] <> quickSort [a | a <- xs, a >= x]
+
+hasHash :: Event -> Bool
+hasHash event = case provenanceSha256 event of
+  Just digest -> T.length digest == 64
+  Nothing -> False

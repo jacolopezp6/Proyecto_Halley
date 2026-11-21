@@ -59,6 +59,7 @@ data Event = Event
   , content :: Map Text Text
   , validationStatus :: ValidationStatus
   , diagnostics :: [Diagnostic]
+  , provenanceSha256 :: Maybe Text
   , ingestedAtUtc :: Maybe UTCTime
   }
   deriving (Eq, Show)
@@ -183,7 +184,7 @@ renderJsonl = T.unlines . map encodeEvent . orderTimeline
         <> field "content" (jsonObject (content event)) <> ","
         <> field "validation_status" (jsonString (statusName (validationStatus event))) <> ","
         <> field "diagnostics" (jsonArray (map encodeDiagnostic (diagnostics event))) <> ","
-        <> field "provenance" ("{\"file\":" <> jsonString (sourceId event) <> ",\"sha256\":null,\"parser_version\":\"0.1.0\",\"location\":" <> jsonString (sourceRecordId event) <> "}") <> ","
+        <> field "provenance" ("{\"file\":" <> jsonString (sourceId event) <> ",\"sha256\":" <> maybe "null" jsonString (provenanceSha256 event) <> ",\"parser_version\":\"0.1.0\",\"location\":" <> jsonString (sourceRecordId event) <> "}") <> ","
         <> field "ingested_at_utc" (maybe "null" (jsonString . formatUtc) (ingestedAtUtc event)) <> ","
         <> field "schema_version" (jsonString "1") <> ","
         <> field "correction_of" "null"

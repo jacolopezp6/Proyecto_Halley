@@ -28,7 +28,7 @@
     "content": {"type": "object", "description": "Parsed fields. Keep only source-derived values and explicit normalization metadata."},
     "validation_status": {"type": "string", "enum": ["valid", "invalid", "ambiguous", "duplicate_candidate", "conflicting", "unparsed"]},
     "diagnostics": {"type": "array", "items": {"type": "object", "additionalProperties": false, "required": ["code", "message"], "properties": {"code": {"type": "string"}, "message": {"type": "string"}, "location": {"type": ["string", "null"]}}}},
-    "provenance": {"type": "object", "additionalProperties": false, "required": ["file", "sha256", "parser_version"], "properties": {"file": {"type": "string"}, "sha256": {"type": ["string", "null"], "description": "SHA-256 of the original source file, null if not computed."}, "parser_version": {"type": "string"}, "location": {"type": ["string", "null"]}}},
+    "provenance": {"type": "object", "additionalProperties": false, "required": ["file", "sha256", "parser_version"], "properties": {"file": {"type": "string"}, "sha256": {"type": ["string", "null"], "description": "SHA-256 of the exact original source-file bytes, before UTF-8 decoding."}, "parser_version": {"type": "string"}, "location": {"type": ["string", "null"]}}},
     "identity": {"type": ["object", "null"], "additionalProperties": false, "properties": {"as_recorded": {"type": ["string", "null"]}, "canonical_id": {"type": ["string", "null"]}, "alias_applied": {"type": ["string", "null"]}, "resolution_status": {"type": "string", "enum": ["resolved", "unresolved", "ambiguous", "not_applicable"]}}},
     "ingested_at_utc": {"type": ["string", "null"], "format": "date-time"},
     "schema_version": {"const": "1"},

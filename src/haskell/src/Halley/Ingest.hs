@@ -11,14 +11,15 @@ import Data.Set (Set)
 import qualified Data.Set as Set
 import Data.Text (Text)
 import qualified Data.Text as T
-import qualified Data.Text.IO as TIO
+import qualified Data.ByteString as BS
+import qualified Data.Text.Encoding as TE
 import Halley.Event
+import Halley.Sha256 (sha256Hex)
 import Data.Time (UTCTime)
 import Data.Time.Clock (getCurrentTime)
 import System.FilePath ((</>))
 import Text.Parsec (Parsec, between, char, choice, count, eof, getInput, hexDigit, many, many1, noneOf, parse, sepBy, skipMany, space, string)
 import qualified Text.Parsec as P
-import System.IO (IOMode (ReadMode), hSetEncoding, utf8, withFile)
 
 type Row = Map Text Text
 type Parser = Parsec Text ()
@@ -28,7 +29,7 @@ loadQueryAnswers path = do
   result <- readUtf8 path
   pure $ case result of
     Left exception -> Left (T.pack (show exception))
-    Right raw -> traverse (parseQueryLine path) [(number, line) | (number, line) <- numbered (T.lines raw), not (T.null (T.strip line))]
+    Right (raw, _) -> traverse (parseQueryLine path) [(number, line) | (number, line) <- numbered (T.lines raw), not (T.null (T.strip line))]
 
 parseQueryLine :: FilePath -> (Int, Text) -> Either Text QueryAnswer
 parseQueryLine path (lineNumber, raw) = do
@@ -77,7 +78,7 @@ loadModules path = do
   result <- readUtf8 path
   pure $ case result of
     Left _ -> Set.empty
-    Right raw -> case T.lines raw of
+    Right (raw, _) -> case T.lines raw of
       [] -> Set.empty
       header : rows -> case parseCsv header of
         Left _ -> Set.empty
@@ -95,7 +96,7 @@ loadPeople path = do
   result <- readUtf8 path
   pure $ case result of
     Left _ -> []
-    Right raw -> case T.lines raw of
+    Right (raw, _) -> case T.lines raw of
       [] -> []
       header : rows ->
         let names = either (const []) id (parseCsv header)
@@ -115,12 +116,16 @@ readSource directory people modules (name, kind) = do
   result <- readUtf8 (directory </> name)
   pure $ case result of
     Left exception -> [missingFileEvent name (T.pack (show exception))]
-    Right raw -> parseSource people modules name kind raw
+    Right (raw, hash) -> map (\event -> event {provenanceSha256 = Just hash}) (parseSource people modules name kind raw)
 
-readUtf8 :: FilePath -> IO (Either IOException Text)
-readUtf8 path = try $ withFile path ReadMode $ \handle -> do
-  hSetEncoding handle utf8
-  TIO.hGetContents handle
+readUtf8 :: FilePath -> IO (Either Text (Text, Text))
+readUtf8 path = do
+  result <- try (BS.readFile path) :: IO (Either IOException BS.ByteString)
+  pure $ case result of
+    Left exception -> Left (T.pack (show exception))
+    Right bytes -> case TE.decodeUtf8' bytes of
+      Left exception -> Left ("UTF-8 inválido: " <> T.pack (show exception))
+      Right raw -> Right (T.dropWhile (== '\xfeff') raw, sha256Hex bytes)
 
 missingFileEvent :: FilePath -> Text -> Event
 missingFileEvent name message = Event
@@ -134,6 +139,7 @@ missingFileEvent name message = Event
   , content = Map.empty
   , validationStatus = Invalid
   , diagnostics = [Diagnostic "SOURCE_MISSING" message]
+  , provenanceSha256 = Nothing
   , ingestedAtUtc = Nothing
   }
 
@@ -255,6 +261,7 @@ baseEvent name kind rowNumber original timestamp fields status issues = Event
   , content = fields
   , validationStatus = status
   , diagnostics = issues
+  , provenanceSha256 = Nothing
   , ingestedAtUtc = Nothing
   }
 

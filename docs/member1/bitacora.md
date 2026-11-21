@@ -10,8 +10,9 @@
 | 2026-11-21 | Se propuso API HTTP local JSON bajo `/v1` e IDs idempotentes. | Pendiente de ratificación | Validar contra Java, Haskell, Prolog y Smalltalk. |
 | 2026-11-21 | Se redactó catálogo inicial de pruebas para los seis archivos de evidencia y dos referencias. | Preparado | Los originales del curso aún no aparecen en `data/raw/` ni `data/reference/`. |
 | 2026-11-21 | Se crearon ocho fixtures sintéticos bajo `tests/fixtures/member1-demo/` en CSV, JSON y texto. | Completo para demostración | Son datos inventados de prueba, no evidencia oficial. Cubren alias `Luka`, tarjeta incompleta y duplicada, presencia malformada, `LAB_B` fuera del mapa y conteos contradictorios. |
-| 2026-11-21 | Se implementaron tipos Haskell, parsers de las seis fuentes y dos referencias, UTC explícito, alias, diagnósticos de campos/módulos, duplicados/conflictos, timeline, informe y salida JSONL. | Prototipo compilado | Ajustar parsers al recibir fuentes oficiales. SHA-256 queda nulo y no hay persistencia compartida. |
-| 2026-11-21 | Se ejecutaron 22 verificaciones y se parsearon los 28 eventos JSONL producidos por la demo. | Pasó en fixtures sintéticos | `-Wall -Wcompat -Werror`; tres inválidos, dos lecturas en conflicto y un duplicado permanecen identificados. Esto no valida los formatos oficiales. |
+| 2026-11-21 | Se implementaron tipos Haskell, parsers de las seis fuentes y dos referencias, UTC explícito, alias, diagnósticos de campos/módulos, duplicados/conflictos, timeline, informe y salida JSONL. | Prototipo compilado | Ajustar parsers al recibir fuentes oficiales. |
+| 2026-11-21 | Se añadió SHA-256 calculado sobre los bytes exactos de cada archivo de origen y se incluye en la procedencia de cada evento; se verificó el vector conocido `abc`. | Pasó | La huella aplica a los fixtures sintéticos por ahora; debe cotejarse con fuentes oficiales al recibirlas. |
+| 2026-11-21 | Se ejecutaron 24 verificaciones y se parsearon los 28 eventos JSONL producidos por la demo. | Pasó en fixtures sintéticos | `-Wall -Wcompat -Werror`; tres inválidos, dos lecturas en conflicto y un duplicado permanecen identificados. Esto no valida los formatos oficiales. |
 | 2026-11-21 | Se publicaron el contrato (`d9fd57a`), componente Haskell (`c637369`), fixtures/demo (`914046a`) y respuestas JSONL en C6 (`636c162`) a `origin/codex/member1-haskell`. | Publicado | `data/raw/` y `data/reference/` siguen sin los archivos originales del curso. |
 | 2026-11-21 | Se añadió carga de respuestas JSONL al informe C6 con evidencia, certeza, supuestos, límites y versión. | Publicado (`636c162`) | La demo usa una respuesta sintética; falta conectar el emisor Prolog real. |
 
@@ -25,5 +26,5 @@ JSON Lines como almacén canónico se descarta provisionalmente porque no resuel
 2. Inspeccionar estructura real, codificación, zona horaria, unidades, duplicados y errores.
 3. Ratificar modelo, transporte, persistencia y arranque único con los otros integrantes.
 4. Conectar la recepción de respuestas Prolog para incluir consultas reales en C6.
-5. Persistir originales y correcciones en el almacén común acordado y calcular el hash de fuente.
+5. Persistir originales y correcciones en el almacén común acordado; la ingesta Haskell ya calcula el hash de fuente.
 6. Seguir publicando commits por hitos en `codex/member1-haskell`.

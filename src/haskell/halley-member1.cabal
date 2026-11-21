@@ -6,11 +6,12 @@ build-type:         Simple
 executable halley-member1
   main-is:          Main.hs
   hs-source-dirs:   app, src
-  other-modules:    Halley.Event, Halley.Ingest
+  other-modules:    Halley.Event, Halley.Ingest, Halley.Sha256
   default-language: GHC2021
   ghc-options:      -Wall -Wcompat -Werror
   build-depends:
       base >=4.18 && <5
+    , bytestring
     , containers
     , parsec
     , text
@@ -20,11 +21,12 @@ test-suite member1-tests
   type:             exitcode-stdio-1.0
   main-is:          Spec.hs
   hs-source-dirs:   ../../tests/haskell, src
-  other-modules:    Halley.Event, Halley.Ingest
+  other-modules:    Halley.Event, Halley.Ingest, Halley.Sha256
   default-language: GHC2021
   ghc-options:      -Wall -Wcompat -Werror
   build-depends:
       base >=4.18 && <5
+    , bytestring
     , containers
     , parsec
     , text
