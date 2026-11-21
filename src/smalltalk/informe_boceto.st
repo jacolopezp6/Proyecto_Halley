@@ -1,30 +1,23 @@
+
 (Object << #InformeForense package: 'Halley7') install.
 
-InformeForense compile: 'eventos
-    | lista |
-
-    lista := OrderedCollection new.
-    lista add: ''01:20:33 - Uso de tarjeta IV-07 en P4''.
-    lista add: ''01:40:00 - Corte de energia''.
-
-    ^ lista
+InformeForense compile: 'eventosDesde: carpeta
+    ^ (carpeta / ''eventos_prueba.txt'') readStreamDo: [ :entrada |
+        entrada contents lines
+    ]
 '.
 
-InformeForense compile: 'problemas
-    | lista |
-
-    lista := OrderedCollection new.
-    lista add: ''Registro duplicado en tarjetas.csv''.
-    lista add: ''Registro corrupto en tarjetas.csv''.
-
-    ^ lista
+InformeForense compile: 'problemasDesde: carpeta
+    ^ (carpeta / ''problemas_prueba.txt'') readStreamDo: [ :entrada |
+        entrada contents lines
+    ]
 '.
 
-InformeForense compile: 'generar
+InformeForense compile: 'generarDesde: carpeta
     | archivo eventos problemas |
 
-    eventos := self eventos.
-    problemas := self problemas.
+    eventos := self eventosDesde: carpeta.
+    problemas := self problemasDesde: carpeta.
     archivo := FileSystem disk workingDirectory / ''informe_halley7.txt''.
 
     archivo writeStreamDo: [ :salida |
@@ -54,5 +47,3 @@ InformeForense compile: 'generar
 
     Transcript show: ''Informe generado: '', archivo fullName; cr.
 '.
-
-InformeForense new generar.

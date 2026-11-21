@@ -1,0 +1,2 @@
+Registro duplicado en tarjetas.csv
+Registro corrupto en tarjetas.csv
