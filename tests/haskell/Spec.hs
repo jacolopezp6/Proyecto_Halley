@@ -3,6 +3,7 @@
 module Main (main) where
 
 import Control.Monad (unless)
+import qualified Data.ByteString as BS
 import qualified Data.ByteString.Char8 as BSC
 import qualified Data.Map.Strict as Map
 import Data.Text (Text)
@@ -16,6 +17,7 @@ import System.Exit (exitFailure)
 main :: IO ()
 main = do
   check "SHA-256 known vector" (sha256Hex (BSC.pack "abc") == "ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad")
+  check "SHA-256 multi-block known vector" (sha256Hex (BSC.pack "abcdbcdecdefdefgefghfghighijhijkijkljklmklmnlmnomnopnopq") == "248d6a61d20638b8e5c026930c3e6039a33ce45964ff2167f6ecedd419db06c1")
   check "UTC timestamp" (normalizeTimestamp "2042-07-12T03:00:00Z" /= Nothing)
   check "explicit offset" (normalizeTimestamp "2042-07-12T05:00:00+0200" == normalizeTimestamp "2042-07-12T03:00:00Z")
   check "ISO offset with colon" (normalizeTimestamp "2042-07-12T05:00:00+02:00" == normalizeTimestamp "2042-07-12T03:00:00Z")
@@ -23,6 +25,8 @@ main = do
   events <- ingestDirectory "../../tests/fixtures/member1-demo"
   check "all eight sources load" (length events == 28)
   check "each parsed event has source SHA-256" (all hasHash events)
+  sourceBytes <- BS.readFile "../../tests/fixtures/member1-demo/temperatura.csv"
+  check "event hash matches exact fixture bytes" (maybe False ((== Just (sha256Hex sourceBytes)) . provenanceSha256) (findEvent "temperatura.csv#2" events))
   let badPresence = findEvent "presencia.csv#3" events
   check "corrupt presence reading is invalid" (maybe False ((== Invalid) . validationStatus) badPresence)
   check "corrupt original is preserved" (maybe False ((== "2042-07-12T03:05:00Z,P3,dos") . recordOriginal) badPresence)
