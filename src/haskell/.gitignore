@@ -1,0 +1,4 @@
+.build/
+.cabal-store/
+dist-newstyle/
+report.md
