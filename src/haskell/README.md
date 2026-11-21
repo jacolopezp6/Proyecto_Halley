@@ -23,7 +23,7 @@ Para ejecutar las verificaciones del núcleo, usa `./src/haskell/test.ps1` en Wi
 ## Estructura
 
 - `src/Halley/Event.hs`: tipos algebraicos y transformaciones puras para UTC, ordenamiento, JSONL e informe.
-- `src/Halley/Ingest.hs`: lectura de CSV, texto delimitado y JSON de energía; diagnósticos, duplicados, conflictos y alias.
+- `src/Halley/Ingest.hs`: lectura de CSV (incluidas filas CRLF), texto delimitado y JSON de energía; diagnósticos, duplicados, conflictos y alias. Calcula SHA-256 de los bytes originales antes de decodificar UTF-8.
 - `app/Main.hs`: entrada/salida del componente.
 - `../../tests/fixtures/member1-demo/`: datos sintéticos repetibles.
 - `../../tests/haskell/`: verificaciones del componente.
@@ -33,6 +33,6 @@ El informe incorpora respuestas en `QueryAnswer`, con nivel de certeza, evidenci
 
 ## Pendientes de integración real
 
-Esta versión conserva procedencia por archivo y fila/línea, pero no calcula SHA-256 ni persiste en la base compartida. La generación de respuestas de Prolog tampoco está conectada a la CLI. Hay que ratificar el contrato con el equipo y adaptar los parsers a los archivos originales.
+Esta versión conserva procedencia por archivo, hash y fila/línea, pero todavía no persiste en la base compartida. La generación de respuestas de Prolog tampoco está conectada a la CLI. Hay que ratificar el contrato con el equipo y adaptar los parsers a los archivos originales.
 
 Este paquete cubre el componente de Persona 1; no implementa las capacidades Prolog, Java o Smalltalk de los otros integrantes.

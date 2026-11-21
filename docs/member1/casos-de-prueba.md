@@ -5,6 +5,7 @@ Los nombres de archivo se toman del plan del proyecto. Los archivos no estaban p
 | ID | Fuente(s) | Caso | Criterio de aceptación |
 |---|---|---|---|
 | ING-01 | `tarjetas.csv` | Ingerir una fila válida, tarjeta incompleta, fila con columnas extra y fila malformada. | Conservar bytes/texto y ubicación; diagnosticar el registro incompleto sin descartarlo. |
+| ING-CRLF | CSV | Leer filas con terminador CRLF. | El `\r` final no se trata como dato ni error; el registro original conserva el terminador. |
 | ING-02 | `radio.txt` | Procesar línea válida, vacía, hora no interpretable y texto con alias. | Texto exacto y línea permanecen disponibles; normalización/identidad separadas; parseo parcial no pierde evidencia. |
 | ING-03 | `energia.json` | Cargar JSON válido y probar sintaxis inválida/campo ausente. | Error incluye ubicación; archivo bruto se conserva; registros parseables no se descartan por otro registro defectuoso. |
 | ING-04 | `presencia.csv` | Cargar conteos e incluir un valor mal escrito (caso indicado por el plan). | El valor corrupto nunca se convierte en conteo válido; queda diagnóstico y procedencia. |

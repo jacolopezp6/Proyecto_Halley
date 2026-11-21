@@ -323,7 +323,7 @@ parseCsv line = case parse csvLine "csv" line of
   Right values -> Right values
 
 csvLine :: Parser [Text]
-csvLine = P.sepBy csvField (char ',') <* eof
+csvLine = P.sepBy csvField (char ',') <* P.optional (char '\r') <* eof
 
 csvField :: Parser Text
 csvField = T.pack <$> choice [quotedField, unquotedField]

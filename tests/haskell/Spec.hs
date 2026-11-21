@@ -33,6 +33,9 @@ main = do
   check "same-sensor disagreement is marked as conflict" (maybe False ((== Conflicting) . validationStatus) (findEvent "presencia.csv#5" events))
   check "unknown module is diagnosed against station reference" (maybe False (any ((== "UNKNOWN_MODULE") . diagnosticCode) . diagnostics) (findEvent "presencia.csv#6" events))
   check "corrupt card record is preserved and invalid" (maybe False ((== Invalid) . validationStatus) (findEvent "tarjetas.csv#3" events))
+  check "CRLF CSV row parses while retaining its original terminator" $ maybe False
+    (\event -> validationStatus event == Valid && T.isSuffixOf "\r" (recordOriginal event))
+    (findEvent "estacion.csv#4" events)
   let ordered = orderTimeline events
   check "timeline is ordered with dated records first" (allTimesOrdered ordered)
   let answerRecord = QueryAnswer "Q-1" "¿Qué sustenta la presencia en P3?" "Se observó un conteo de dos personas." "supported" ["presencia.csv#2"] ["El sensor registró el conteo correctamente."] ["El sensor no identifica personas."] "demo-v1"
