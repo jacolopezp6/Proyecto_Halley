@@ -16,7 +16,7 @@ Con GHC instalado, desde la raíz del repositorio:
 .\src\haskell\run.ps1
 ```
 
-En Linux/macOS, usa `./src/haskell/run.sh`. Los argumentos opcionales son directorio de datos, ruta del informe, ruta de eventos JSONL y ruta de respuestas JSONL, relativos a la raíz del repositorio. Por defecto se leen los fixtures sintéticos, incluida una respuesta sintética, y se generan ejemplos en `docs/member1/`. Para omitir respuestas en PowerShell, pasa una cadena vacía como cuarto argumento.
+En Linux/macOS, usa `./src/haskell/run.sh`. Los argumentos opcionales son directorio de datos, ruta del informe, ruta de eventos JSONL y ruta de respuestas JSONL, relativos a la raíz del repositorio. Por defecto se leen los fixtures sintéticos, incluida una respuesta sintética, y las salidas se escriben en `src/haskell/.build/output/`. Los ejemplos versionados en `docs/member1/` son estáticos. Para omitir respuestas en PowerShell, pasa una cadena vacía como cuarto argumento.
 
 Para ejecutar las verificaciones del núcleo, usa `./src/haskell/test.ps1` en Windows o `./src/haskell/test.sh` en Linux/macOS. También se puede usar `cabal test` desde `src/haskell`.
 

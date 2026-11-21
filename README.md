@@ -56,7 +56,7 @@ Desde la raíz del repo, ejecutar con GHC:
 .\src\haskell\test.ps1
 ```
 
-En Linux/macOS: `./src/haskell/run.sh` y `./src/haskell/test.sh`. Los parsers deben contrastarse con los archivos oficiales antes de interpretar el caso. La generación automática de respuestas desde Prolog y la persistencia común aún requieren integración.
+En Linux/macOS: `./src/haskell/run.sh` y `./src/haskell/test.sh`. Las salidas generadas quedan en `src/haskell/.build/output/`; los ejemplos versionados en `docs/member1/` son muestras estáticas. Los parsers deben contrastarse con los archivos oficiales antes de interpretar el caso. La generación automática de respuestas desde Prolog y la persistencia común aún requieren integración.
 
 ## Fuentes que debe integrar el sistema
 

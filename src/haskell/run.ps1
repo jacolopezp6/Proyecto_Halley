@@ -1,7 +1,7 @@
 param(
   [Parameter(Position = 0)][string]$DataDirectory = 'tests/fixtures/member1-demo',
-  [Parameter(Position = 1)][string]$ReportOutput = 'docs/member1/informe-demostracion.md',
-  [Parameter(Position = 2)][string]$EventsOutput = 'docs/member1/eventos-demostracion.jsonl',
+  [Parameter(Position = 1)][string]$ReportOutput = 'src/haskell/.build/output/informe.md',
+  [Parameter(Position = 2)][string]$EventsOutput = 'src/haskell/.build/output/eventos.jsonl',
   [Parameter(Position = 3)][string]$QueriesInput = 'tests/fixtures/member1-demo/queries.jsonl'
 )
 $ErrorActionPreference = 'Stop'
@@ -11,6 +11,7 @@ $dataPath = if ([IO.Path]::IsPathRooted($DataDirectory)) { $DataDirectory } else
 $reportPath = if ([IO.Path]::IsPathRooted($ReportOutput)) { $ReportOutput } else { Join-Path $repoRoot $ReportOutput }
 $eventsPath = if ([IO.Path]::IsPathRooted($EventsOutput)) { $EventsOutput } else { Join-Path $repoRoot $EventsOutput }
 $queriesPath = if ([string]::IsNullOrWhiteSpace($QueriesInput)) { $null } elseif ([IO.Path]::IsPathRooted($QueriesInput)) { $QueriesInput } else { Join-Path $repoRoot $QueriesInput }
+New-Item -ItemType Directory -Force -Path (Split-Path -Parent $reportPath),(Split-Path -Parent $eventsPath) | Out-Null
 Push-Location $packageRoot
 try {
   New-Item -ItemType Directory -Force -Path .build\app | Out-Null
