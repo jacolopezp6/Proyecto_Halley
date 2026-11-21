@@ -12,7 +12,8 @@
 | 2026-11-21 | Se crearon ocho fixtures sintéticos bajo `tests/fixtures/member1-demo/` en CSV, JSON y texto. | Completo para demostración | Son datos inventados de prueba, no evidencia oficial. Cubren alias `Luka`, tarjeta incompleta y duplicada, presencia malformada, `LAB_B` fuera del mapa y conteos contradictorios. |
 | 2026-11-21 | Se implementaron tipos Haskell, parsers de las seis fuentes y dos referencias, UTC explícito, alias, diagnósticos de campos/módulos, duplicados/conflictos, timeline, informe y salida JSONL. | Prototipo compilado | Ajustar parsers al recibir fuentes oficiales. SHA-256 queda nulo y no hay persistencia compartida. |
 | 2026-11-21 | Se ejecutaron 17 verificaciones y se parsearon los 28 eventos JSONL producidos por la demo. | Pasó en fixtures sintéticos | `-Wall -Wcompat -Werror`; tres inválidos, dos lecturas en conflicto y un duplicado permanecen identificados. Esto no valida los formatos oficiales. |
-| 2026-11-21 | Se clonó el repositorio y se integró el trabajo en `codex/member1-haskell`. | Preparado para commits por hitos | Publicar commits a `origin`; `data/raw/` y `data/reference/` siguen sin datos originales. |
+| 2026-11-21 | Se publicó el contrato y la bitácora inicial (`d9fd57a`) y el componente Haskell con pruebas (`c637369`) en `origin/codex/member1-haskell`. | Publicado | `data/raw/` y `data/reference/` siguen sin los archivos originales del curso. |
+| 2026-11-21 | Se añadieron los ocho fixtures sintéticos y los informes de demostración. | Preparado para commit | Ejecutar desde la raíz con `src/haskell/run.ps1`; los ejemplos no representan evidencia real. |
 
 ## Alternativa descartada provisionalmente
 
@@ -25,4 +26,4 @@ JSON Lines como almacén canónico se descarta provisionalmente porque no resuel
 3. Ratificar modelo, transporte, persistencia y arranque único con los otros integrantes.
 4. Conectar la recepción de respuestas Prolog para incluir consultas reales en C6.
 5. Persistir originales y correcciones en el almacén común acordado y calcular el hash de fuente.
-6. Crear y publicar commits por hitos en `codex/member1-haskell`.
+6. Seguir publicando commits por hitos en `codex/member1-haskell`.

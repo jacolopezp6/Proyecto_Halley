@@ -4,14 +4,14 @@ Los nombres de archivo se toman del plan del proyecto. Los archivos no estaban p
 
 | ID | Fuente(s) | Caso | Criterio de aceptación |
 |---|---|---|---|
-| ING-01 | `tarjetas.csv` | Ingerir una fila válida, una incompleta, una con columnas extra y una malformada. | Conservar bytes/texto y ubicación de cada fila; marcar la no válida con diagnóstico; continuar cuando el formato lo permita. |
+| ING-01 | `tarjetas.csv` | Ingerir una fila válida, tarjeta incompleta, fila con columnas extra y fila malformada. | Conservar bytes/texto y ubicación; diagnosticar el registro incompleto sin descartarlo. |
 | ING-02 | `radio.txt` | Procesar línea válida, vacía, hora no interpretable y texto con alias. | Texto exacto y línea permanecen disponibles; normalización/identidad separadas; parseo parcial no pierde evidencia. |
 | ING-03 | `energia.json` | Cargar JSON válido y probar sintaxis inválida/campo ausente. | Error incluye ubicación; archivo bruto se conserva; registros parseables no se descartan por otro registro defectuoso. |
 | ING-04 | `presencia.csv` | Cargar conteos e incluir un valor mal escrito (caso indicado por el plan). | El valor corrupto nunca se convierte en conteo válido; queda diagnóstico y procedencia. |
 | ING-05 | `temperatura.csv` | Cargar lectura válida y probar valor no numérico, unidad ausente y hora inválida. | Unidad/valor/hora se validan; el original y cada anomalía se preservan. |
 | ING-06 | `bitacora.txt` | Ingerir anotaciones estructuradas y libres, incluyendo líneas vacías. | Entrada y número de línea se pueden recuperar incluso si queda `unparsed`. |
 | REF-01 | `personal.csv` | Resolver persona por ID/nombre, alias `Luka`, alias desconocido y alias ambiguo. | Se conserva forma registrada; canonical ID y alias se anotan aparte; ambigüedad queda sin resolver. |
-| REF-02 | `estacion.csv` | Cargar módulos/puertas y revisar referencias rotas/duplicadas. | La referencia queda versionada; duplicados/relaciones rotas se informan y se citan. |
+| REF-02 | `estacion.csv` y lecturas | Cargar módulos/topología y revisar una lectura del módulo `LAB_B`, ausente del mapa. | La referencia queda versionada; el módulo desconocido se diagnostica y conserva el original. |
 | NORM-01 | Seis fuentes | Normalizar timestamps UTC, offset explícito, zona faltante y fecha inválida. | Conversión correcta solo cuando la fuente permite inferirla; UTC termina en `Z`; original queda intacto; hora desconocida no se inventa. |
 | NORM-02 | Seis fuentes | Encontrar duplicado byte a byte y dos lecturas del mismo sensor/módulo en el mismo instante con valores distintos. | Ninguno desaparece; marcar duplicado candidato o conflicto y señalar los IDs relacionados. |
 | PROV-01 | Ocho archivos | Seguir cualquier evento/anomalía hasta archivo, SHA-256, fila/línea y parser. | La procedencia es completa y reproducible. |

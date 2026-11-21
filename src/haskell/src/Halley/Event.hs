@@ -160,7 +160,7 @@ renderReportWithQueries events queries = T.unlines (header <> summary <> timelin
         <> " | " <> escapeCell (T.intercalate "; " [k <> "=" <> v | (k, v) <- Map.toAscList (content event)])
         <> " |"
     renderDiagnostics event =
-      ("- **" <> eventId event <> "** (" <> sourceId event <> ":" <> sourceRecordId event <> "): ")
+      ("- **" <> eventId event <> "** (" <> sourceId event <> ":" <> sourceRecordId event <> "):")
         : map (\d -> "  - " <> diagnosticCode d <> ": " <> diagnosticMessage d) (diagnostics event)
     escapeCell = T.replace "|" "\\|" . T.replace "\n" " "
     listOrNone [] = "ninguno declarado"
