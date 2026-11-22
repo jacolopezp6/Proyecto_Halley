@@ -1,0 +1,7 @@
+Pregunta: Es posible recorrer LAB-B a GEN en 2 minutos?
+Respuesta: Si, es fisicamente posible si la puerta permite el paso.
+Evidencia: estacion.csv, puerta P4; enunciado, seccion 2.
+
+Pregunta: Quien abrio la puerta exterior P8?
+Respuesta: No se puede determinar con certeza si alguien la abrio ni quien.
+Evidencia: estacion.csv, puerta P8; bitacora.txt, entrada de las 03:00.

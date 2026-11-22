@@ -13,11 +13,19 @@ InformeForense compile: 'problemasDesde: carpeta
     ]
 '.
 
+InformeForense compile: 'consultasDesde: carpeta
+    ^ (carpeta / ''consultas_prueba.txt'') readStreamDo: [ :entrada |
+        entrada contents lines
+    ]
+'.
+
 InformeForense compile: 'generarDesde: carpeta
-    | archivo eventos problemas |
+    | archivo eventos problemas consultas |
 
     eventos := self eventosDesde: carpeta.
     problemas := self problemasDesde: carpeta.
+    consultas := self consultasDesde: carpeta.
+
     archivo := FileSystem disk workingDirectory / ''informe_halley7.txt''.
 
     archivo writeStreamDo: [ :salida |
@@ -36,13 +44,10 @@ InformeForense compile: 'generarDesde: carpeta
         ].
         salida cr.
 
-        salida nextPutAll: ''3. PREGUNTAS Y RESPUESTAS''; cr.
-        salida nextPutAll: ''Pregunta: Quien pudo abrir P8?''; cr.
-        salida nextPutAll: ''Respuesta: Pendiente de Prolog''; cr.
-        salida cr.
-
-        salida nextPutAll: ''4. EVIDENCIAS''; cr.
-        salida nextPutAll: ''tarjetas.csv y energia.json''; cr.
+        salida nextPutAll: ''3. PREGUNTAS, RESPUESTAS Y EVIDENCIAS''; cr.
+        consultas do: [ :consulta |
+            salida nextPutAll: consulta; cr.
+        ].
     ].
 
     Transcript show: ''Informe generado: '', archivo fullName; cr.
